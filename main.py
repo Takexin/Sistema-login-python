@@ -1,4 +1,5 @@
 import json
+from multiprocessing import Value
 import time
 
 data = json.load(open("usuarios.json"))
@@ -37,19 +38,32 @@ def main():
         time.sleep(30)
         main()
 
+def adicionarUsuario():
+    usuarioRegistro = input("Digite um nome de usuário: ")
+    senhaRegistro = input("Digite uma senha: ")
+    data.append({"usuario" : usuarioRegistro, "senha" : senhaRegistro})
+    json.dump(data, open("usuarios.json", "w"), indent=4)
+    print("Usuário registrado!\n\n\n\n")
+
+
 def onLogin(usuario, senha):
-    option = 0
-    while option != 3:
+    while True:
         print("Selecione uma opção: \n1-Ver perfil \n2-Criar usuário \n3-Sair\n\n\n\n")
-        option = int(input("Opção:"))
+        try:
+            option = int(input("Opção:"))
+        except ValueError:
+            print("Digite apenas números inteiros, tente novamente.")
+            continue
         match option:
             case 1:
                 print(f"Usuário: {usuario} \n Senha: {senha}")
 
             case 2:
-                usuarioRegistro = input("Digite um nome de usuário: ")
-                senhaRegistro = input("Digite uma senha: ")
-                data.append({"usuario" : usuarioRegistro, "senha" : senhaRegistro})
-                json.dump(data, open("usuarios.json", "w"), indent=4)
-                print("Usuário registrado!\n\n\n\n")
+                adicionarUsuario()
+
+            case 3:
+                break
+
+            case _:
+                print("Opção inválida, tente novamente")
 main()
